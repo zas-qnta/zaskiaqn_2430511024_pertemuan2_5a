@@ -1,30 +1,29 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Pressable } from 'react-native';
+import { COLORS, SPACE, RADIUS, TYPO } from '../style/token';
 
-export default function DiaryCard({ title, date, preview, moodImage, moodType }) {
-  const getBorderStyle = () => {
-    switch (moodType) {
-      case 'calm':
-        return { borderColor: '#0a0a0a', borderWidth: 2 };
-      case 'excited':
-        return { borderColor: '#000000', borderWidth: 2 };
-      case 'focus':
-        return { borderColor: '#060606', borderWidth: 2 }; 
-      case 'setres':
-        return { borderColor: '#0a0a0a', borderWidth: 2 };
-      case 'relaxed':
-        return { borderColor: '#020202', borderWidth: 2 }; 
-      default:
-        return { borderColor: '#050505', borderWidth: 1 };
-    }
-  };
-
+export default function DiaryCard({
+  title,
+  date,
+  preview,
+  moodImage, // Diubah dari moodUri menjadi moodImage sesuai DiaryListScreen
+  onPress,
+  variant = 'list',
+}) {
   return (
-    <View style={[styles.card, getBorderStyle()]}>
-      <Image
-        source={typeof moodImage === 'string' ? { uri: moodImage } : moodImage}
-        style={styles.mood}
-      />
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.card,
+        variant === 'grid' && styles.cardGrid,
+        { opacity: pressed ? 0.85 : 1 },
+      ]}
+      accessible
+      accessibilityLabel={`Entri ${title} tanggal ${date}`}
+    >
+      {/* Menggunakan moodImage langsung karena sudah di-require */}
+      <Image source={moodImage} style={styles.mood} />
+      
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={1}>
           {title}
@@ -34,38 +33,43 @@ export default function DiaryCard({ title, date, preview, moodImage, moodType })
           {preview}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    gap: 12,
-    padding: 12,
+    gap: SPACE.l,
+    padding: SPACE.l,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
-    borderRadius: 12,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.card,
+    backgroundColor: COLORS.surface,
     marginBottom: 12,
   },
+  cardGrid: {},
   mood: {
     width: 64,
     height: 64,
-    borderRadius: 32,
+    borderRadius: RADIUS.avatar,
+    backgroundColor: '#eef2ff',
   },
   content: {
     flex: 1,
   },
   title: {
-    fontSize: 16,
+    fontSize: TYPO.title,
     fontWeight: '700',
+    color: COLORS.text,
   },
   date: {
-    fontSize: 12,
-    color: '#6b7280',
+    fontSize: TYPO.caption,
+    color: COLORS.muted,
     marginBottom: 6,
   },
   preview: {
-    fontSize: 14,
+    fontSize: TYPO.body,
+    color: COLORS.text,
   },
 });
